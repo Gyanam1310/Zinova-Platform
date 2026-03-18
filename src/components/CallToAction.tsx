@@ -1,23 +1,63 @@
 import { useState } from "react";
 import { Leaf, Zap, Heart, Users } from "lucide-react";
 import AnimatedButton from "@/components/ui/animated-button";
+import { logError, logUserAction } from "@/lib/logger";
 
 const CallToAction = () => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const safeLogUserAction = (action: string, metadata: Record<string, unknown>) => {
+    try {
+      logUserAction(action, metadata, "CallToAction");
+    } catch {
+      // Logging should never break CTA flow.
+    }
+  };
+
+  const safeLogError = (action: string, metadata: Record<string, unknown>) => {
+    try {
+      logError(action, metadata, "CallToAction");
+    } catch {
+      // Logging should never break CTA flow.
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      // In a real app, this would connect to your backend
-      console.log("Email submitted:", email);
+    if (!email.trim()) {
+      safeLogError("VALIDATION_ERROR", {
+        form: "contact",
+        field: "email",
+        message: "Invalid email format",
+      });
+      return;
+    }
+
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isEmailValid) {
+      safeLogError("VALIDATION_ERROR", {
+        form: "contact",
+        field: "email",
+        message: "Invalid email format",
+      });
+      return;
+    }
+
+    try {
+      safeLogUserAction("FORM_SUBMIT", { form: "contact" });
       setIsSubmitted(true);
       setEmail("");
-      
+      safeLogUserAction("FORM_SUCCESS", { form: "contact" });
+
       // Reset after 3 seconds
       setTimeout(() => {
         setIsSubmitted(false);
       }, 3000);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      safeLogError("FORM_ERROR", { form: "contact", error: errorMessage });
+      throw error;
     }
   };
 
@@ -45,25 +85,25 @@ const CallToAction = () => {
   ];
 
   return (
-    <section className="py-20 px-6 bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className="bg-gradient-to-br from-primary to-primary/90 px-4 py-20 text-primary-foreground sm:px-6 lg:py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
           {/* Left Column - Benefits */}
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Transform Waste Into Worth 🌟
+            <h2 className="mb-6 text-3xl font-bold md:text-4xl">
+              Transform Waste Into Worth
             </h2>
-            <p className="text-lg text-primary-foreground/90 mb-8 max-w-xl">
+            <p className="mb-8 max-w-xl text-base leading-relaxed text-primary-foreground/90 md:text-lg">
               Join the growing community of restaurants, farms, and NGOs making a real impact on food waste and hunger.
             </p>
             
-            <div className="grid sm:grid-cols-2 gap-6 mb-8">
+            <div className="mb-8 grid gap-6 sm:grid-cols-2">
               {benefits.map((benefit, index) => {
                 const Icon = benefit.icon;
                 return (
-                  <div key={index} className="flex items-start">
-                    <div className="p-2 bg-primary-foreground/10 rounded-lg mr-4">
-                      <Icon className="h-5 w-5 text-accent" />
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="rounded-lg bg-primary-foreground/10 p-2 dark:bg-[var(--bg-secondary)]">
+                      <Icon className="h-5 w-5 text-accent dark:text-[var(--text-secondary)]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-primary-foreground">{benefit.title}</h3>
@@ -80,16 +120,22 @@ const CallToAction = () => {
               <AnimatedButton 
                 size="lg" 
                 variant="secondary"
-                className="bg-white text-primary hover:bg-gray-100"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 dark:bg-accent dark:text-accent-foreground"
                 animationType="lift"
+                onClick={() => {
+                  safeLogUserAction("CTA_CLICK", { label: "Schedule Demo" });
+                }}
               >
                 Schedule Demo
               </AnimatedButton>
               <AnimatedButton 
                 size="lg" 
                 variant="outline"
-                className="border-white text-white hover:bg-white/10"
+                className="opacity-100 border border-white/80 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary focus-visible:ring-white/80 dark:border-[var(--border-color)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--card-bg)] dark:hover:text-[var(--text-primary)]"
                 animationType="lift"
+                onClick={() => {
+                  safeLogUserAction("CTA_CLICK", { label: "View Case Studies" });
+                }}
               >
                 View Case Studies
               </AnimatedButton>
@@ -97,7 +143,7 @@ const CallToAction = () => {
           </div>
           
           {/* Right Column - Email Signup */}
-          <div className="bg-card/10 backdrop-blur-sm rounded-2xl p-8 border border-primary-foreground/20">
+          <div className="rounded-2xl border border-primary-foreground/20 bg-card/10 p-8 backdrop-blur-sm dark:border-[var(--border-color)] dark:bg-[var(--card-bg)]/70">
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-primary-foreground mb-2">
                 Ready to Get Started?
@@ -109,11 +155,11 @@ const CallToAction = () => {
             
             {isSubmitted ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
                   <Heart className="h-8 w-8 text-green-400" />
                 </div>
                 <h4 className="text-xl font-bold text-primary-foreground mb-2">
-                  Thank You! 🙏
+                  Thank You!
                 </h4>
                 <p className="text-primary-foreground/80">
                   We've received your information and will contact you soon.
@@ -122,19 +168,19 @@ const CallToAction = () => {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-primary-foreground/80 mb-1">
+                  <label htmlFor="name" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Full Name
                   </label>
                   <input
                     type="text"
                     id="name"
                     placeholder="Enter your name"
-                    className="w-full px-4 py-3 bg-white/10 border border-primary-foreground/20 rounded-lg text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-primary-foreground/80 mb-1">
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Work Email
                   </label>
                   <input
@@ -144,19 +190,19 @@ const CallToAction = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
-                    className="w-full px-4 py-3 bg-white/10 border border-primary-foreground/20 rounded-lg text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
                 
                 <div>
-                  <label htmlFor="organization" className="block text-sm font-medium text-primary-foreground/80 mb-1">
+                  <label htmlFor="organization" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Organization
                   </label>
                   <input
                     type="text"
                     id="organization"
                     placeholder="Restaurant, NGO, Farm, etc."
-                    className="w-full px-4 py-3 bg-white/10 border border-primary-foreground/20 rounded-lg text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent"
+                    className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
                 
@@ -166,6 +212,9 @@ const CallToAction = () => {
                     size="lg" 
                     className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
                     animationType="pulse"
+                    onClick={() => {
+                      safeLogUserAction("CTA_CLICK", { label: "Join Movement" });
+                    }}
                   >
                     Join the Movement
                   </AnimatedButton>

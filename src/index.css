@@ -8,6 +8,14 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
+    --bg-primary: #f7fbf9;
+    --bg-secondary: #edf5f1;
+    --card-bg: #ffffff;
+    --border-color: rgba(17, 24, 39, 0.08);
+    --text-primary: #0f2a23;
+    --text-secondary: #4b6a5f;
+    --accent-token: #d4a64a;
+
     --background: 120 20% 98%;
     --foreground: 158 60% 15%;
 
@@ -61,33 +69,41 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 158 60% 8%;
-    --foreground: 120 20% 95%;
+    --bg-primary: #0b1f1a;
+    --bg-secondary: #0f2a23;
+    --card-bg: #13332a;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --text-primary: #e6f4ef;
+    --text-secondary: #a7c4b8;
+    --accent-token: #d4a64a;
 
-    --card: 158 55% 12%;
-    --card-foreground: 120 20% 95%;
+    --background: 164 49% 8%;
+    --foreground: 153 39% 93%;
 
-    --popover: 158 55% 12%;
-    --popover-foreground: 120 20% 95%;
+    --card: 162 47% 14%;
+    --card-foreground: 153 39% 93%;
 
-    --primary: 120 20% 95%;
-    --primary-foreground: 158 55% 25%;
+    --popover: 162 47% 14%;
+    --popover-foreground: 153 39% 93%;
 
-    --secondary: 158 45% 18%;
-    --secondary-foreground: 120 20% 95%;
+    --primary: 161 46% 34%;
+    --primary-foreground: 153 39% 93%;
 
-    --muted: 158 45% 18%;
-    --muted-foreground: 120 15% 65%;
+    --secondary: 163 48% 11%;
+    --secondary-foreground: 153 39% 93%;
 
-    --accent: 38 75% 55%;
-    --accent-foreground: 0 0% 100%;
+    --muted: 163 42% 13%;
+    --muted-foreground: 154 24% 71%;
+
+    --accent: 40 61% 56%;
+    --accent-foreground: 164 49% 8%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 120 20% 95%;
 
-    --border: 158 45% 18%;
-    --input: 158 45% 18%;
-    --ring: 120 20% 95%;
+    --border: 0 0% 100% / 0.08;
+    --input: 0 0% 100% / 0.08;
+    --ring: 40 61% 56%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -106,5 +122,21 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply tracking-tight;
+  }
+
+  p {
+    @apply leading-relaxed;
   }
 }

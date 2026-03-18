@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Leaf, Users, Heart, Package, TrendingUp } from "lucide-react";
 import AnimatedCounter from "@/components/AnimatedCounter";
+import { logUserAction, logError } from "@/lib/logger";
 
 const ImpactCalculator = () => {
   const [foodWaste, setFoodWaste] = useState(100); // kg per week
@@ -11,6 +12,30 @@ const ImpactCalculator = () => {
     waterSaved: 0,
     peopleFed: 0
   });
+
+  const handleSliderChange = (field: "foodWaste" | "timePeriod", value: number) => {
+    try {
+      logUserAction(
+        "CALCULATOR_CHANGE",
+        {
+          field,
+          value,
+        },
+        "ImpactCalculator"
+      );
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      try {
+        logError(
+          "LOGGING_ERROR",
+          { source: "CALCULATOR_CHANGE", error: errorMessage },
+          "ImpactCalculator"
+        );
+      } catch {
+        // Logging should never block calculator interactions.
+      }
+    }
+  };
 
   // Calculate impact based on food waste and time period
   useEffect(() => {
@@ -67,11 +92,11 @@ const ImpactCalculator = () => {
   ];
 
   return (
-    <section id="impact-calculator" className="py-20 px-6 bg-gradient-to-br from-primary/10 to-accent/10">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center space-y-4 mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground">
-            Calculate Your Impact 🌍
+    <section id="impact-calculator" className="bg-gradient-to-br from-primary/10 to-accent/10 px-4 py-20 sm:px-6 lg:py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-16 space-y-4 text-center">
+          <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+            Calculate Your Impact
           </h2>
           <div className="w-20 h-1 bg-accent mx-auto rounded-full" />
           <p className="text-muted-foreground max-w-2xl mx-auto">
@@ -79,10 +104,10 @@ const ImpactCalculator = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 lg:grid-cols-3">
           {/* Calculator Controls */}
-          <div className="lg:col-span-1 bg-card border border-border rounded-xl p-6 shadow-sm">
-            <h3 className="text-xl font-bold text-foreground mb-6">Your Food Waste</h3>
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm dark:border-[var(--border-color)] dark:bg-[var(--card-bg)] lg:col-span-1">
+            <h3 className="mb-6 text-xl font-bold text-foreground">Your Food Waste</h3>
             
             <div className="space-y-6">
               <div>
@@ -95,7 +120,11 @@ const ImpactCalculator = () => {
                     min="0"
                     max="500"
                     value={foodWaste}
-                    onChange={(e) => setFoodWaste(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      setFoodWaste(value);
+                      handleSliderChange("foodWaste", value);
+                    }}
                     className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
                   />
                   <span className="text-lg font-bold text-primary min-w-[60px]">
@@ -118,7 +147,11 @@ const ImpactCalculator = () => {
                     min="1"
                     max="24"
                     value={timePeriod}
-                    onChange={(e) => setTimePeriod(Number(e.target.value))}
+                    onChange={(e) => {
+                      const value = Number(e.target.value);
+                      setTimePeriod(value);
+                      handleSliderChange("timePeriod", value);
+                    }}
                     className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
                   />
                   <span className="text-lg font-bold text-primary min-w-[60px]">
@@ -132,7 +165,7 @@ const ImpactCalculator = () => {
               </div>
               
               <div className="pt-4">
-                <div className="bg-primary/5 rounded-lg p-4">
+                <div className="rounded-lg bg-primary/5 p-4 dark:bg-[var(--bg-secondary)]">
                   <h4 className="font-bold text-foreground mb-2">With Zinova:</h4>
                   <p className="text-sm text-muted-foreground">
                     {foodWaste > 0 ? (
@@ -148,16 +181,16 @@ const ImpactCalculator = () => {
           
           {/* Impact Results */}
           <div className="lg:col-span-2">
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid gap-6 sm:grid-cols-2">
               {impactItems.map((item, index) => {
                 const Icon = item.icon;
                 return (
                   <div 
                     key={index} 
-                    className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+                    className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-shadow duration-300 hover:shadow-md dark:border-[var(--border-color)] dark:bg-[var(--card-bg)]"
                   >
                     <div className="flex items-start mb-4">
-                      <div className={`p-3 rounded-lg ${item.color}/10 mr-4`}>
+                      <div className={`mr-4 rounded-lg p-3 ${item.color}/10 dark:bg-[var(--bg-secondary)]`}>
                         <Icon className={`h-6 w-6 ${item.color}`} />
                       </div>
                       <div>
@@ -179,9 +212,9 @@ const ImpactCalculator = () => {
               })}
             </div>
             
-            <div className="mt-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl p-6 text-white">
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="flex items-center mb-4 md:mb-0 md:mr-4">
+            <div className="mt-8 rounded-2xl bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white shadow-sm dark:from-[var(--bg-secondary)] dark:to-[var(--bg-primary)] dark:text-[var(--text-primary)]">
+              <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:gap-6">
+                <div className="flex items-center">
                   <Heart className="h-8 w-8 mr-3" />
                   <div>
                     <h3 className="text-xl font-bold">Ready to Make a Difference?</h3>
@@ -190,7 +223,20 @@ const ImpactCalculator = () => {
                     </p>
                   </div>
                 </div>
-                <button className="ml-auto bg-white text-green-600 font-bold py-3 px-6 rounded-full hover:bg-gray-100 transition-colors whitespace-nowrap">
+                <button
+                  onClick={() => {
+                    try {
+                      logUserAction(
+                        "CTA_CLICK",
+                        { label: "Get Started Today" },
+                        "ImpactCalculator"
+                      );
+                    } catch {
+                      // Logging should never block CTA behavior.
+                    }
+                  }}
+                  className="whitespace-nowrap rounded-lg bg-white px-6 py-3 font-semibold text-green-700 transition-colors hover:bg-gray-100 dark:border dark:border-[var(--border-color)] dark:bg-[var(--card-bg)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--bg-secondary)] md:ml-auto"
+                >
                   Get Started Today
                 </button>
               </div>

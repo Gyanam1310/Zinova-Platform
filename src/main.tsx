@@ -1,5 +1,13 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { setupGlobalErrorLogging } from "@/lib/logger";
 
-createRoot(document.getElementById("root")!).render(<App />);
+setupGlobalErrorLogging();
+
+createRoot(document.getElementById("root")!).render(
+	<ErrorBoundary componentName="RootApp">
+		<App />
+	</ErrorBoundary>
+);
