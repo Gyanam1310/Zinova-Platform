@@ -8,102 +8,99 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --bg-primary: #f7fbf9;
-    --bg-secondary: #edf5f1;
+    --bg-primary: #f8faf9;
+    --bg-secondary: #f0f7f4;
     --card-bg: #ffffff;
-    --border-color: rgba(17, 24, 39, 0.08);
-    --text-primary: #0f2a23;
+    --border-color: rgba(17, 24, 39, 0.06);
+    --text-primary: #0a1f1a;
     --text-secondary: #4b6a5f;
-    --accent-token: #d4a64a;
+    --accent-token: #e5b045;
 
-    --background: 120 20% 98%;
-    --foreground: 158 60% 15%;
+    --background: 150 20% 99%;
+    --foreground: 165 60% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 158 60% 15%;
+    --card-foreground: 165 60% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 158 60% 15%;
+    --popover-foreground: 165 60% 8%;
 
-    --primary: 158 55% 25%;
+    --primary: 162 45% 25%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 120 25% 95%;
-    --secondary-foreground: 158 60% 15%;
+    --secondary: 150 25% 96%;
+    --secondary-foreground: 165 60% 8%;
 
-    --muted: 120 20% 96%;
-    --muted-foreground: 158 25% 45%;
+    --muted: 150 20% 97%;
+    --muted-foreground: 165 15% 45%;
 
-    --accent: 38 75% 55%;
+    --accent: 42 80% 55%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 120 20% 90%;
-    --input: 120 20% 90%;
-    --ring: 158 55% 25%;
+    --border: 150 20% 92%;
+    --input: 150 20% 92%;
+    --ring: 162 45% 25%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
     
-    --gradient-hero: linear-gradient(135deg, hsl(158 55% 25%), hsl(158 45% 35%));
-    --gradient-accent: linear-gradient(135deg, hsl(38 75% 55%), hsl(38 85% 65%));
-    --shadow-soft: 0 4px 20px -4px hsl(158 55% 25% / 0.1);
-    --shadow-hover: 0 8px 30px -6px hsl(158 55% 25% / 0.15);
+    --gradient-hero: linear-gradient(135deg, hsl(162 45% 25%), hsl(162 40% 32%));
+    --gradient-accent: linear-gradient(135deg, hsl(42 80% 55%), hsl(42 90% 65%));
+    --shadow-soft: 0 4px 30px -4px hsl(162 45% 25% / 0.08);
+    --shadow-hover: 0 20px 40px -8px hsl(162 45% 25% / 0.12);
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --bg-primary: #0b1f1a;
-    --bg-secondary: #0f2a23;
-    --card-bg: #13332a;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --text-primary: #e6f4ef;
+    --bg-primary: #071411;
+    --bg-secondary: #0a1f1a;
+    --card-bg: #0d2a23;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --text-primary: #f0f7f5;
     --text-secondary: #a7c4b8;
-    --accent-token: #d4a64a;
+    --accent-token: #e5b045;
 
-    --background: 164 49% 8%;
-    --foreground: 153 39% 93%;
+    --background: 168 50% 4%;
+    --foreground: 155 40% 96%;
 
-    --card: 162 47% 14%;
-    --card-foreground: 153 39% 93%;
+    --card: 168 45% 6%;
+    --card-foreground: 155 40% 96%;
 
-    --popover: 162 47% 14%;
-    --popover-foreground: 153 39% 93%;
+    --popover: 168 45% 6%;
+    --popover-foreground: 155 40% 96%;
 
-    --primary: 161 46% 34%;
-    --primary-foreground: 153 39% 93%;
+    --primary: 162 40% 40%;
+    --primary-foreground: 155 40% 96%;
 
-    --secondary: 163 48% 11%;
-    --secondary-foreground: 153 39% 93%;
+    --secondary: 168 45% 8%;
+    --secondary-foreground: 155 40% 96%;
 
-    --muted: 163 42% 13%;
-    --muted-foreground: 154 24% 71%;
+    --muted: 168 40% 10%;
+    --muted-foreground: 155 20% 70%;
 
-    --accent: 40 61% 56%;
-    --accent-foreground: 164 49% 8%;
+    --accent: 42 65% 58%;
+    --accent-foreground: 168 50% 4%;
 
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 120 20% 95%;
+    --destructive-foreground: 150 20% 95%;
 
-    --border: 0 0% 100% / 0.08;
-    --input: 0 0% 100% / 0.08;
-    --ring: 40 61% 56%;
+    --border: 168 30% 12%;
+    --input: 168 30% 12%;
+    --ring: 42 65% 58%;
+    
+    --shadow-soft: 0 4px 30px -4px hsla(0, 0%, 0%, 0.5);
+    --shadow-hover: 0 20px 40px -8px hsla(0, 0%, 0%, 0.7);
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
