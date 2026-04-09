@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { NAVIGATION_ITEMS } from "@/lib/config";
+import { motion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
 import MobileMenu from "@/components/MobileMenu";
 import logo from "/Zinova_logo.png";
@@ -42,25 +43,31 @@ const Navbar = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
         
         {/* Logo */}
-        <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate("/")}>
+        <motion.div 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="flex items-center gap-4 cursor-pointer" 
+          onClick={() => navigate("/")}
+        >
           <img 
             src={logo} 
             alt="Zinova" 
             className="h-12 w-12 object-contain"
           />
           <span className="text-xl font-bold tracking-tight text-foreground">Zinova</span>
-        </div>
+        </motion.div>
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-6 md:flex">
           {NAVIGATION_ITEMS.map((item, index) => (
-            <button
+            <motion.button
               key={index}
+              whileHover={{ y: -2 }}
               onClick={() => handleNavigation(item.href)}
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
             >
               {item.name}
-            </button>
+            </motion.button>
           ))}
 
           {/* Auth Buttons */}
@@ -68,17 +75,19 @@ const Navbar = () => {
             <Link
               to="/login"
               onClick={() => handleNavClick("/login")}
-              className="text-sm font-medium text-foreground hover:text-primary transition"
+              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
               Login
             </Link>
-            <Link
-              to="/signup"
-              onClick={() => handleNavClick("/signup")}
-              className="text-sm font-medium text-white bg-primary px-4 py-2 rounded-md hover:bg-primary/90 transition shadow-sm"
-            >
-              Sign up
-            </Link>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link
+                to="/signup"
+                onClick={() => handleNavClick("/signup")}
+                className="text-sm font-medium text-white bg-primary px-4 py-2 rounded-md hover:bg-primary/90 transition shadow-sm"
+              >
+                Sign up
+              </Link>
+            </motion.div>
           </div>
 
           <ThemeToggle />
