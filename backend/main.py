@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.config.settings import CORS_ORIGIN
-from app.routes import otp
+from app.routes import form, otp
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
@@ -28,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(otp.router)
+app.include_router(form.router)
 
 
 @app.get("/api/health")

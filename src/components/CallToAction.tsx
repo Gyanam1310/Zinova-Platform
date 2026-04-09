@@ -2,10 +2,17 @@ import { useState } from "react";
 import { Leaf, Zap, Heart, Users } from "lucide-react";
 import AnimatedButton from "@/components/ui/animated-button";
 import { logError, logUserAction } from "@/lib/logger";
+import { submitFormToFastApi } from "@/services/formSubmission";
 
 const CallToAction = () => {
-  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    organization: "",
+  });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const safeLogUserAction = (action: string, metadata: Record<string, unknown>) => {
     try {
@@ -23,21 +30,43 @@ const CallToAction = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
+    setSubmitError("");
+
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      organization: formData.organization.trim(),
+      message: "",
+      source: "landing" as const,
+    };
+
+    if (!payload.name) {
+      setSubmitError("Name is required");
       safeLogError("VALIDATION_ERROR", {
-        form: "contact",
-        field: "email",
-        message: "Invalid email format",
+        form: "landing",
+        field: "name",
+        message: "Name is required",
       });
       return;
     }
 
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (!isEmailValid) {
+    if (!payload.email) {
+      setSubmitError("Email is required");
       safeLogError("VALIDATION_ERROR", {
-        form: "contact",
+        form: "landing",
+        field: "email",
+        message: "Email is required",
+      });
+      return;
+    }
+
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
+    if (!isEmailValid) {
+      setSubmitError("Invalid email format");
+      safeLogError("VALIDATION_ERROR", {
+        form: "landing",
         field: "email",
         message: "Invalid email format",
       });
@@ -45,19 +74,32 @@ const CallToAction = () => {
     }
 
     try {
-      safeLogUserAction("FORM_SUBMIT", { form: "contact" });
-      setIsSubmitted(true);
-      setEmail("");
-      safeLogUserAction("FORM_SUCCESS", { form: "contact" });
+      setIsSubmitting(true);
+      safeLogUserAction("FORM_SUBMIT", { form: "landing" });
 
-      // Reset after 3 seconds
+      const result = await submitFormToFastApi(payload);
+      if (!result.ok) {
+        safeLogError("FORM_ERROR", {
+          form: "landing",
+          error: result.error || result.message,
+        });
+        setSubmitError(result.error || "Failed");
+        return;
+      }
+
+      setIsSubmitted(true);
+      setFormData({ name: "", email: "", organization: "" });
+      safeLogUserAction("FORM_SUCCESS", { form: "landing" });
+
       setTimeout(() => {
         setIsSubmitted(false);
       }, 3000);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      safeLogError("FORM_ERROR", { form: "contact", error: errorMessage });
-      throw error;
+      safeLogError("FORM_ERROR", { form: "landing", error: errorMessage });
+      setSubmitError("Network error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -96,7 +138,7 @@ const CallToAction = () => {
             <p className="mb-8 max-w-xl text-base leading-relaxed text-primary-foreground/90 md:text-lg">
               Join the growing community of restaurants, farms, and NGOs making a real impact on food waste and hunger.
             </p>
-            
+
             <div className="mb-8 grid gap-6 sm:grid-cols-2">
               {benefits.map((benefit, index) => {
                 const Icon = benefit.icon;
@@ -115,10 +157,10 @@ const CallToAction = () => {
                 );
               })}
             </div>
-            
+
             <div className="flex flex-wrap gap-4">
-              <AnimatedButton 
-                size="lg" 
+              <AnimatedButton
+                size="lg"
                 variant="secondary"
                 className="bg-accent text-accent-foreground hover:bg-accent/90 dark:bg-accent dark:text-accent-foreground"
                 animationType="lift"
@@ -128,8 +170,8 @@ const CallToAction = () => {
               >
                 Schedule Demo
               </AnimatedButton>
-              <AnimatedButton 
-                size="lg" 
+              <AnimatedButton
+                size="lg"
                 variant="outline"
                 className="opacity-100 border border-white/80 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary focus-visible:ring-white/80 dark:border-[var(--border-color)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--card-bg)] dark:hover:text-[var(--text-primary)]"
                 animationType="lift"
@@ -141,7 +183,7 @@ const CallToAction = () => {
               </AnimatedButton>
             </div>
           </div>
-          
+
           {/* Right Column - Email Signup */}
           <div className="rounded-2xl border border-primary-foreground/20 bg-card/10 p-8 backdrop-blur-sm dark:border-[var(--border-color)] dark:bg-[var(--card-bg)]/70">
             <div className="text-center mb-6">
@@ -152,7 +194,7 @@ const CallToAction = () => {
                 Join thousands of organizations fighting food waste
               </p>
             </div>
-            
+
             {isSubmitted ? (
               <div className="text-center py-8">
                 <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
@@ -162,64 +204,73 @@ const CallToAction = () => {
                   Thank You!
                 </h4>
                 <p className="text-primary-foreground/80">
-                  We've received your information and will contact you soon.
+                  We have received your information and will contact you soon.
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="name" className="mb-2 block text-sm font-medium text-primary-foreground/80">
+                  <label htmlFor="cta-name" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Full Name
                   </label>
                   <input
                     type="text"
-                    id="name"
+                    id="cta-name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Enter your name"
                     className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-primary-foreground/80">
+                  <label htmlFor="cta-email" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Work Email
                   </label>
                   <input
                     type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="cta-email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="Enter your email"
                     required
                     className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
-                
+
                 <div>
-                  <label htmlFor="organization" className="mb-2 block text-sm font-medium text-primary-foreground/80">
+                  <label htmlFor="cta-organization" className="mb-2 block text-sm font-medium text-primary-foreground/80">
                     Organization
                   </label>
                   <input
                     type="text"
-                    id="organization"
+                    id="cta-organization"
+                    value={formData.organization}
+                    onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
                     placeholder="Restaurant, NGO, Farm, etc."
                     className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                   />
                 </div>
-                
+
+                {submitError ? (
+                  <p className="text-sm text-red-200">{submitError}</p>
+                ) : null}
+
                 <div className="pt-2">
-                  <AnimatedButton 
+                  <AnimatedButton
                     type="submit"
-                    size="lg" 
+                    disabled={isSubmitting}
+                    size="lg"
                     className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
                     animationType="pulse"
                     onClick={() => {
                       safeLogUserAction("CTA_CLICK", { label: "Join Movement" });
                     }}
                   >
-                    Join the Movement
+                    {isSubmitting ? "Submitting..." : "Join the Movement"}
                   </AnimatedButton>
                 </div>
-                
+
                 <p className="text-xs text-center text-primary-foreground/60 mt-4">
                   By signing up, you agree to our Terms of Service and Privacy Policy
                 </p>
