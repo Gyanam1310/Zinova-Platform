@@ -1,7 +1,7 @@
 // Application configuration and constants
 export const APP_CONFIG = {
   TITLE: "Zinova - Empowering Sustainability Through Technology",
-  DESCRIPTION: "Zinova tackles food waste and hunger using AI, blockchain, and data-driven insights to connect farmers, restaurants, and NGOs in real time.",
+  DESCRIPTION: "Zinova tackles food waste and hunger using AI, centralized audit databases, and data-driven insights to connect farmers, restaurants, and NGOs in real time.",
   THEME: {
     PRIMARY: "green",
     SECONDARY: "blue",
@@ -29,8 +29,8 @@ export const FEATURES = [
   },
   {
     icon: "Shield",
-    title: "Blockchain Transparency",
-    description: "Complete traceability and trust through immutable records of every transaction."
+    title: "Centralized Audit Database",
+    description: "Complete traceability and trust through secure and centralized records of every transaction."
   },
   {
     icon: "Truck",
@@ -129,7 +129,7 @@ export const VALUE_PROPOSITIONS = [
   {
     icon: "Shield",
     title: "Complete Transparency",
-    description: "Blockchain technology ensures every transaction is traceable, secure, and trustworthy."
+    description: "Our Centralized Audit Database ensures every transaction is traceable, secure, and trustworthy."
   },
   {
     icon: "Heart",

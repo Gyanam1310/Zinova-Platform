@@ -136,15 +136,6 @@ const CallToAction = () => {
                 >
                   Schedule Demo
                 </AnimatedButton>
-                <AnimatedButton
-                  size="lg"
-                  variant="outline"
-                  className="opacity-100 border border-white/80 bg-transparent text-white hover:border-white hover:bg-white hover:text-primary focus-visible:ring-white/80 dark:border-[var(--border-color)] dark:text-[var(--text-primary)] dark:hover:bg-[var(--card-bg)] dark:hover:text-[var(--text-primary)]"
-                  animationType="lift"
-                  onClick={() => safeLogUserAction("CTA_CLICK", { label: "View Case Studies" })}
-                >
-                  View Case Studies
-                </AnimatedButton>
               </div>
             </div>
           </ScrollReveal>

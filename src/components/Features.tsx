@@ -95,7 +95,7 @@ const Features = () => {
             <div className="inline-flex items-center gap-2 bg-primary/5 px-4 py-2 rounded-full border border-primary/10 transition-all hover:bg-primary/10">
               <Shield className="h-4 w-4 text-primary" />
               <span className="text-sm text-primary font-medium">
-                All data secured with blockchain technology
+                All data secured with a centralized audit database
               </span>
             </div>
           </div>
