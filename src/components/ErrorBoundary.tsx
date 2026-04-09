@@ -32,7 +32,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   public render(): ReactNode {
     if (this.state.hasError) {
-      return null;
+      return (
+        <div style={{ padding: "2rem", fontFamily: "monospace", color: "red" }}>
+          <h2>Something went wrong in {this.props.componentName ?? "App"}.</h2>
+          <p>Check the browser console for details.</p>
+        </div>
+      );
     }
 
     return this.props.children;

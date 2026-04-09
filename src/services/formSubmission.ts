@@ -13,7 +13,8 @@ export interface SubmitResult {
   data?: unknown;
 }
 
-const SUBMIT_URL = "http://127.0.0.1:8000/api/submit";
+const API_BASE = import.meta.env.VITE_API_URL || "";
+const SUBMIT_URL = `${API_BASE}/api/submit`;
 
 export async function submitFormToFastApi(payload: SubmitPayload): Promise<SubmitResult> {
   console.log("Sending data:", payload);

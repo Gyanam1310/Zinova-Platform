@@ -12,14 +12,16 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
+  // Initialize theme from localStorage once on mount
   useEffect(() => {
-    // Check for saved theme or default to light
     const savedTheme = localStorage.getItem("theme") as Theme | null;
     if (savedTheme) {
       setTheme(savedTheme);
     }
-    
-    // Add class to body for Tailwind dark mode
+  }, []);
+
+  // Apply dark class whenever theme changes
+  useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
     } else {
