@@ -63,14 +63,23 @@ const Navbar = () => {
             </button>
           ))}
 
-          {/* Login Button */}
-          <Link
-            to="/login"
-            onClick={() => handleNavClick("/login")}
-            className="text-sm font-medium text-foreground border border-border px-4 py-2 rounded-md hover:bg-muted transition"
-          >
-            Login
-          </Link>
+          {/* Auth Buttons */}
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              onClick={() => handleNavClick("/login")}
+              className="text-sm font-medium text-foreground hover:text-primary transition"
+            >
+              Login
+            </Link>
+            <Link
+              to="/signup"
+              onClick={() => handleNavClick("/signup")}
+              className="text-sm font-medium text-white bg-primary px-4 py-2 rounded-md hover:bg-primary/90 transition shadow-sm"
+            >
+              Sign up
+            </Link>
+          </div>
 
           <ThemeToggle />
         </div>

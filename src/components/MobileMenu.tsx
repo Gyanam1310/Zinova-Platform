@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, X, Leaf } from "lucide-react";
+import { Link } from "react-router-dom";
 import { NAVIGATION_ITEMS } from "@/lib/config";
 import ThemeToggle from "@/components/ThemeToggle";
 import AnimatedButton from "@/components/ui/animated-button";
@@ -32,6 +33,23 @@ const MobileMenu = () => {
                 {item.name}
               </a>
             ))}
+
+            <div className="pt-2 flex flex-col gap-2">
+              <Link
+                to="/login"
+                className="w-full py-3 text-center rounded-md font-medium text-foreground hover:bg-muted transition"
+                onClick={() => setIsOpen(false)}
+              >
+                Login
+              </Link>
+              <Link
+                to="/signup"
+                className="w-full py-3 text-center rounded-md font-medium text-white bg-primary hover:bg-primary/90 transition shadow-sm"
+                onClick={() => setIsOpen(false)}
+              >
+                Sign up
+              </Link>
+            </div>
             
             <div className="pt-4 border-t border-border">
               <div className="flex items-center justify-between">
