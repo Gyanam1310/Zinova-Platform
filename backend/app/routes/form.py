@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-import traceback
 import uuid
 from datetime import datetime
 from functools import lru_cache
@@ -64,27 +63,13 @@ def submit_form(body: SubmitRequest):
 
     if not name:
         raise HTTPException(status_code=400, detail="name is required")
-
     if not email:
         raise HTTPException(status_code=400, detail="email is required")
-
     if not EMAIL_REGEX.match(email):
         raise HTTPException(status_code=400, detail="email format is invalid")
 
-    payload = {
-        "name": name,
-        "email": email,
-        "organization": organization,
-        "message": message,
-        "source": source,
-    }
-
-    # Keep this log for quick backend diagnostics while frontend integration is stabilized.
-    print("[FORM] /api/submit payload:", payload)
-
     row_id = str(uuid.uuid4())
     timestamp = datetime.now().isoformat()
-    status = "new"
 
     row = [
         row_id,
@@ -94,44 +79,22 @@ def submit_form(body: SubmitRequest):
         organization or "",
         message or "",
         source or "landing",
-        status,
+        "new",
     ]
-
-    values = [row]
-
-    print("[DEBUG] Preparing to append row to Google Sheets")
-    print("[DEBUG] spreadsheetId:", SPREADSHEET_ID)
-    print("[DEBUG] range:", "Sheet1!A:H")
-    print("[DEBUG] values:", values)
 
     try:
         sheets = get_sheets_client()
-        result = (
-            sheets.spreadsheets()
-            .values()
-            .append(
-                spreadsheetId=SPREADSHEET_ID,
-                range="Sheet1!A:H",
-                valueInputOption="USER_ENTERED",
-                insertDataOption="INSERT_ROWS",
-                body={"values": values},
-            )
-            .execute()
-        )
+        sheets.spreadsheets().values().append(
+            spreadsheetId=SPREADSHEET_ID,
+            range="Sheet1!A:H",
+            valueInputOption="USER_ENTERED",
+            insertDataOption="INSERT_ROWS",
+            body={"values": [row]},
+        ).execute()
 
-        print("✅ Row inserted:", row)
-        print("📊 Sheets response:", result)
+        logger.info("Form submission stored: %s <%s>", name, email)
+        return {"success": True, "message": "Data stored successfully"}
 
-        return {
-            "success": True,
-            "message": "Data stored successfully",
-        }
     except Exception as exc:
         logger.exception("Google Sheets append failed")
-        print("❌ Google Sheets error:", str(exc))
-        print("❌ Full traceback:")
-        print(traceback.format_exc())
-        return {
-            "success": False,
-            "error": str(exc),
-        }
+        return {"success": False, "error": str(exc)}
