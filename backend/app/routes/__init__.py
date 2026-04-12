@@ -1,3 +1,3 @@
-from app.routes import form, otp
+from app.routes import form, otp, contributions
 
-__all__ = ["form", "otp"]
+__all__ = ["form", "otp", "contributions"]
