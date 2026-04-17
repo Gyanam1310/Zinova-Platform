@@ -122,6 +122,7 @@ All colors MUST be HSL.
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    overflow-x: hidden;
   }
 
   h1,
@@ -130,10 +131,69 @@ All colors MUST be HSL.
   h4,
   h5,
   h6 {
-    @apply tracking-tight;
+    @apply tracking-tighter;
   }
 
   p {
     @apply leading-relaxed;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-card/70 border border-white/10 dark:border-white/5 shadow-2xl;
+  }
+
+  .mesh-gradient {
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(158, 55%, 25%, 0.15) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(38, 75%, 55%, 0.1) 0, transparent 50%),
+      radial-gradient(at 100% 100%, hsla(158, 55%, 25%, 0.05) 0, transparent 50%),
+      radial-gradient(at 0% 100%, hsla(38, 75%, 55%, 0.1) 0, transparent 50%);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px hsla(var(--primary), 0.3);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .section-fade-top {
+    @apply absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-background via-background/30 to-transparent z-10 pointer-events-none;
+  }
+
+  .section-fade-bottom {
+    @apply absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-background via-background/30 to-transparent z-10 pointer-events-none;
+  }
+
+  /* Custom Premium Slider */
+  .premium-slider {
+    @apply w-full h-2 bg-primary/10 rounded-full appearance-none cursor-pointer transition-all focus:outline-none;
+  }
+
+  .premium-slider::-webkit-slider-thumb {
+    @apply appearance-none w-6 h-6 rounded-full bg-primary border-4 border-background shadow-lg shadow-primary/30 cursor-pointer transition-transform hover:scale-110 active:scale-95;
+  }
+
+  .premium-slider::-moz-range-thumb {
+    @apply w-6 h-6 rounded-full bg-primary border-4 border-background shadow-lg shadow-primary/30 cursor-pointer transition-transform hover:scale-110 active:scale-95;
   }
 }

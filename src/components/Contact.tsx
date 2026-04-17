@@ -69,89 +69,129 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="bg-card px-4 py-20 sm:px-6 lg:py-24">
-      <div className="mx-auto max-w-2xl space-y-8">
-        <div className="text-center space-y-4">
+    <section id="contact" className="px-4 py-20 sm:px-6 lg:py-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center space-y-4 mb-16">
           <h2 className="text-3xl font-bold text-foreground md:text-4xl">
             Join the Movement
           </h2>
           <div className="w-20 h-1 bg-accent mx-auto rounded-full" />
-          <p className="text-base leading-relaxed text-muted-foreground">
+          <p className="text-base leading-relaxed text-muted-foreground max-w-xl mx-auto">
             Whether you're a farmer, restaurant, NGO, or just want to help, let's connect.
           </p>
         </div>
         
-        {isSubmitted ? (
-          <div className="rounded-2xl border border-green-200 bg-green-50 p-8 text-center dark:border-[var(--border-color)] dark:bg-[var(--card-bg)]">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 dark:bg-[var(--bg-secondary)]">
-              <CheckCircle className="h-8 w-8 text-green-600" />
+        <div className="grid gap-12 lg:grid-cols-5">
+          {/* Left Info Panel */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="space-y-6">
+              {[
+                { icon: Mail, title: "Email Us", detail: "hello@zinova.org" },
+                { icon: Building, title: "Headquarters", detail: "Mumbai, India" },
+                { icon: MessageSquare, title: "Response Time", detail: "Within 24 hours" },
+              ].map((item, i) => {
+                const Icon = item.icon;
+                return (
+                  <div key={i} className="flex items-start gap-4 group">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-foreground text-sm">{item.title}</h4>
+                      <p className="text-muted-foreground text-sm mt-0.5">{item.detail}</p>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <h3 className="text-2xl font-bold text-green-800 mb-2 dark:text-[var(--text-primary)]">
-              Thank You!
-            </h3>
-            <p className="text-green-700 dark:text-[var(--text-secondary)]">
-              We've received your message and will contact you soon.
-            </p>
+            
+            <div className="rounded-2xl bg-primary/5 border border-primary/10 p-6">
+              <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                <span className="text-foreground font-bold">500+</span> organizations trust Zinova to manage their food surplus. Join them and make a measurable impact.
+              </p>
+            </div>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 rounded-2xl border border-border bg-background p-6 shadow-sm dark:border-[var(--border-color)] dark:bg-[var(--card-bg)]">
-            <div className="space-y-2">
-              <div className="relative">
-                <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                  className="bg-card pl-10"
-                />
+
+          {/* Right Form */}
+          <div className="lg:col-span-3">
+            {isSubmitted ? (
+              <div className="rounded-3xl border border-primary/20 bg-primary/5 p-12 text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="h-8 w-8 text-primary" />
+                </div>
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  Message Sent!
+                </h3>
+                <p className="text-muted-foreground">
+                  We've received your message and will get back to you shortly.
+                </p>
               </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  type="email"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                  className="bg-card pl-10"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="relative">
-                <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Organization (Optional)"
-                  value={formData.organization}
-                  onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
-                  className="bg-card pl-10"
-                />
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <div className="relative">
-                <MessageSquare className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                <Textarea
-                  placeholder="Tell us how you'd like to get involved..."
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  required
-                  className="min-h-32 bg-card pl-10"
-                />
-              </div>
-            </div>
-            
-            <AnimatedButton type="submit" className="w-full" size="lg" variant="hero" animationType="pulse">
-              Send Message <Send className="ml-2 h-4 w-4" />
-            </AnimatedButton>
-          </form>
-        )}
+            ) : (
+              <form onSubmit={handleSubmit} className="rounded-3xl border border-border/50 bg-card p-8 shadow-xl shadow-primary/5 space-y-5">
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Name</label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                      <Input
+                        placeholder="Your Name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                        className="h-12 rounded-xl border-border/50 bg-secondary/30 pl-11 text-sm focus:border-primary focus:ring-primary/20 transition-colors"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Email</label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                      <Input
+                        type="email"
+                        placeholder="you@company.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                        className="h-12 rounded-xl border-border/50 bg-secondary/30 pl-11 text-sm focus:border-primary focus:ring-primary/20 transition-colors"
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Organization</label>
+                  <div className="relative">
+                    <Building className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                    <Input
+                      placeholder="Restaurant, NGO, Farm, etc."
+                      value={formData.organization}
+                      onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+                      className="h-12 rounded-xl border-border/50 bg-secondary/30 pl-11 text-sm focus:border-primary focus:ring-primary/20 transition-colors"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Message</label>
+                  <div className="relative">
+                    <MessageSquare className="absolute left-4 top-4 h-4 w-4 text-muted-foreground/50" />
+                    <Textarea
+                      placeholder="Tell us how you'd like to get involved..."
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      required
+                      className="min-h-32 rounded-xl border-border/50 bg-secondary/30 pl-11 text-sm focus:border-primary focus:ring-primary/20 transition-colors resize-none"
+                    />
+                  </div>
+                </div>
+                
+                <AnimatedButton type="submit" className="w-full h-12 rounded-xl text-base font-bold" size="lg" variant="hero" animationType="pulse">
+                  Send Message <Send className="ml-2 h-4 w-4" />
+                </AnimatedButton>
+              </form>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
