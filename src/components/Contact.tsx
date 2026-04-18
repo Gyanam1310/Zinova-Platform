@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Send, User, Mail, Building, MessageSquare, CheckCircle } from "lucide-react";
 import AnimatedButton from "@/components/ui/animated-button";
 import { logError, logUserAction } from "@/lib/logger";
+import { submitFormToFastApi } from "@/services/formSubmission";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -15,6 +16,7 @@ const Contact = () => {
     message: ""
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const safeLogUserAction = (action: string, metadata: Record<string, unknown>) => {
     try {
@@ -32,26 +34,78 @@ const Contact = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+    const payload = {
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      organization: formData.organization.trim(),
+      message: formData.message.trim(),
+      source: "contact" as const,
+    };
+
+    if (!payload.name) {
+      toast({
+        title: "Validation error",
+        description: "Name is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!payload.email) {
+      toast({
+        title: "Validation error",
+        description: "Email is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email);
     if (!isEmailValid) {
       safeLogError("VALIDATION_ERROR", {
         form: "contact",
         field: "email",
         message: "Invalid email format",
       });
+
+      toast({
+        title: "Validation error",
+        description: "Invalid email format",
+        variant: "destructive",
+      });
+
       return;
     }
 
     try {
+      setIsSubmitting(true);
       safeLogUserAction("FORM_SUBMIT", { form: "contact" });
+
+      const result = await submitFormToFastApi(payload);
+
+      if (!result.ok) {
+        safeLogError("FORM_ERROR", {
+          form: "contact",
+          error: result.error || result.message,
+        });
+
+        toast({
+          title: "Submission failed",
+          description: result.error || "Failed",
+          variant: "destructive",
+        });
+
+        return;
+      }
 
       toast({
         title: "Message sent",
         description: "Thank you for your interest. We'll get back to you soon.",
       });
+
       setIsSubmitted(true);
       setFormData({ name: "", email: "", organization: "", message: "" });
 
@@ -64,7 +118,14 @@ const Contact = () => {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       safeLogError("FORM_ERROR", { form: "contact", error: errorMessage });
-      throw error;
+
+      toast({
+        title: "Network error",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -192,6 +253,13 @@ const Contact = () => {
             )}
           </div>
         </div>
+            </div>
+            
+            <AnimatedButton type="submit" disabled={isSubmitting} className="w-full" size="lg" variant="hero" animationType="pulse">
+              {isSubmitting ? "Sending..." : "Send Message"} <Send className="ml-2 h-4 w-4" />
+            </AnimatedButton>
+          </form>
+        )}
       </div>
     </section>
   );

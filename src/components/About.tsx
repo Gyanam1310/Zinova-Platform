@@ -24,7 +24,7 @@ const About = () => {
           
           <ScrollReveal variant="slide-up" delay={0.4}>
             <p className="text-center max-w-3xl mx-auto">
-              By leveraging AI-driven matching algorithms, blockchain transparency, and real-time logistics optimization, 
+              By leveraging AI-driven matching algorithms, Centralized Audit Database, and real-time logistics optimization, 
               we ensure that no edible food goes to waste while helping feed those who need it most.
             </p>
           </ScrollReveal>
