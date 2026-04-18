@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Leaf, Zap, Heart, Users } from "lucide-react";
 import AnimatedButton from "@/components/ui/animated-button";
 import { logError, logUserAction } from "@/lib/logger";
+import ScrollReveal from "./ScrollReveal";
+
+const CallToAction = () => {
+  const [email, setEmail] = useState("");
+  const [isSubmitted, setIsSubmitted] = useState(false);
 import { submitFormToFastApi } from "@/services/formSubmission";
 import ScrollReveal from "./ScrollReveal";
 
@@ -31,6 +36,24 @@ const CallToAction = () => {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) {
+      safeLogError("VALIDATION_ERROR", {
+        form: "contact",
+        field: "email",
+        message: "Invalid email format",
+      });
+      return;
+    }
+
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (!isEmailValid) {
+      safeLogError("VALIDATION_ERROR", {
+        form: "contact",
+        field: "email",
+        message: "Invalid email format",
+      });
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError("");
@@ -164,6 +187,7 @@ const CallToAction = () => {
                     </label>
                     <input
                       type="text"
+                      id="name"
                       id="cta-name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -171,6 +195,9 @@ const CallToAction = () => {
                       className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                     />
                   </div>
+                  
+                  <div>
+                    <label htmlFor="email" className="mb-2 block text-sm font-medium text-primary-foreground/80">
 
                   <div>
                     <label htmlFor="cta-email" className="mb-2 block text-sm font-medium text-primary-foreground/80">
@@ -178,6 +205,9 @@ const CallToAction = () => {
                     </label>
                     <input
                       type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       id="cta-email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -186,6 +216,9 @@ const CallToAction = () => {
                       className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                     />
                   </div>
+                  
+                  <div>
+                    <label htmlFor="organization" className="mb-2 block text-sm font-medium text-primary-foreground/80">
 
                   <div>
                     <label htmlFor="cta-organization" className="mb-2 block text-sm font-medium text-primary-foreground/80">
@@ -193,6 +226,7 @@ const CallToAction = () => {
                     </label>
                     <input
                       type="text"
+                      id="organization"
                       id="cta-organization"
                       value={formData.organization}
                       onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
@@ -200,6 +234,21 @@ const CallToAction = () => {
                       className="w-full rounded-lg border border-primary-foreground/20 bg-white/10 px-4 py-3 text-white placeholder-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-accent dark:border-[var(--border-color)] dark:bg-[#0f2a23] dark:text-[var(--text-primary)] dark:placeholder:text-[var(--text-secondary)]"
                     />
                   </div>
+                  
+                  <div className="pt-2">
+                    <AnimatedButton 
+                      type="submit"
+                      size="lg" 
+                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground"
+                      animationType="pulse"
+                      onClick={() => {
+                        safeLogUserAction("CTA_CLICK", { label: "Join Movement" });
+                      }}
+                    >
+                      Join the Movement
+                    </AnimatedButton>
+                  </div>
+                  
 
                   {submitError && <p className="text-sm text-red-200">{submitError}</p>}
 

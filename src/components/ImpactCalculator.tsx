@@ -6,6 +6,9 @@ import { logUserAction, logError } from "@/lib/logger";
 const ImpactCalculator = () => {
   const [foodWaste, setFoodWaste] = useState(100); // kg per week
   const [timePeriod, setTimePeriod] = useState(12); // months
+  const [debouncedFoodWaste, setDebouncedFoodWaste] = useState(foodWaste);
+  const [debouncedTimePeriod, setDebouncedTimePeriod] = useState(timePeriod);
+  
   const [impactData, setImpactData] = useState({
     mealsSaved: 0,
     co2Saved: 0,
@@ -13,40 +16,37 @@ const ImpactCalculator = () => {
     peopleFed: 0
   });
 
-  const handleSliderChange = (field: "foodWaste" | "timePeriod", value: number) => {
-    try {
-      logUserAction(
-        "CALCULATOR_CHANGE",
-        {
-          field,
-          value,
-        },
-        "ImpactCalculator"
-      );
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+  // Debounce the input values
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFoodWaste(foodWaste);
+      setDebouncedTimePeriod(timePeriod);
+      
+      // Log the change only after debouncing
       try {
-        logError(
-          "LOGGING_ERROR",
-          { source: "CALCULATOR_CHANGE", error: errorMessage },
+        logUserAction(
+          "CALCULATOR_SET",
+          { foodWaste, timePeriod },
           "ImpactCalculator"
         );
-      } catch {
-        // Logging should never block calculator interactions.
+      } catch (error) {
+        // Silently fail logging
       }
-    }
-  };
+    }, 400);
 
-  // Calculate impact based on food waste and time period
+    return () => clearTimeout(timer);
+  }, [foodWaste, timePeriod]);
+
+  // Calculate impact based on DEBOUNCED values
   useEffect(() => {
     // Conversion factors (simplified for demonstration)
-    const mealsPerKg = 2.5; // meals saved per kg of food waste prevented
-    const co2PerKg = 2.3; // kg CO2 saved per kg of food waste prevented
-    const waterPerKg = 1500; // liters of water saved per kg of food waste prevented
-    const peoplePerMeal = 0.3; // people fed per meal (fractional because meals are shared)
+    const mealsPerKg = 2.5; 
+    const co2PerKg = 2.3; 
+    const waterPerKg = 1500; 
+    const peoplePerMeal = 0.3; 
     
-    const weeks = timePeriod * 4.33; // approx weeks in selected months
-    const totalFoodWastePrevented = foodWaste * weeks;
+    const weeks = debouncedTimePeriod * 4.33; 
+    const totalFoodWastePrevented = debouncedFoodWaste * weeks;
     
     setImpactData({
       mealsSaved: Math.round(totalFoodWastePrevented * mealsPerKg),
@@ -54,7 +54,7 @@ const ImpactCalculator = () => {
       waterSaved: Math.round(totalFoodWastePrevented * waterPerKg),
       peopleFed: Math.round(totalFoodWastePrevented * mealsPerKg * peoplePerMeal)
     });
-  }, [foodWaste, timePeriod]);
+  }, [debouncedFoodWaste, debouncedTimePeriod]);
 
   const impactItems = [
     {
@@ -104,75 +104,67 @@ const ImpactCalculator = () => {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
+        <div className="grid gap-12 lg:grid-cols-3">
           {/* Calculator Controls */}
-          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm dark:border-[var(--border-color)] dark:bg-[var(--card-bg)] lg:col-span-1">
-            <h3 className="mb-6 text-xl font-bold text-foreground">Your Food Waste</h3>
+          <div className="rounded-3xl border border-border bg-card p-8 shadow-xl shadow-primary/5 dark:bg-[var(--card-bg)] lg:col-span-1">
+            <h3 className="mb-8 text-2xl font-black tracking-tighter text-foreground">Personalize Your Impact</h3>
             
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Food Waste per Week
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="0"
-                    max="500"
-                    value={foodWaste}
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setFoodWaste(value);
-                      handleSliderChange("foodWaste", value);
-                    }}
-                    className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="text-lg font-bold text-primary min-w-[60px]">
-                    {foodWaste} kg
+            <div className="space-y-10">
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                    Food Waste / Week
+                  </label>
+                  <span className="text-2xl font-black text-primary">
+                    {foodWaste} <span className="text-sm font-medium text-muted-foreground uppercase">kg</span>
                   </span>
                 </div>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0 kg</span>
-                  <span>500 kg</span>
+                <input
+                  type="range"
+                  min="0"
+                  max="500"
+                  step="5"
+                  value={foodWaste}
+                  onChange={(e) => setFoodWaste(Number(e.target.value))}
+                  className="premium-slider"
+                />
+                <div className="flex justify-between text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tighter">
+                  <span>Minimal</span>
+                  <span>High Impact (500kg)</span>
                 </div>
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Time Period
-                </label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="range"
-                    min="1"
-                    max="24"
-                    value={timePeriod}
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setTimePeriod(value);
-                      handleSliderChange("timePeriod", value);
-                    }}
-                    className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
-                  />
-                  <span className="text-lg font-bold text-primary min-w-[60px]">
-                    {timePeriod} mo
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                    Time Horizon
+                  </label>
+                  <span className="text-2xl font-black text-primary">
+                    {timePeriod} <span className="text-sm font-medium text-muted-foreground uppercase">mo</span>
                   </span>
                 </div>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>1 mo</span>
-                  <span>24 mo</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="24"
+                  value={timePeriod}
+                  onChange={(e) => setTimePeriod(Number(e.target.value))}
+                  className="premium-slider"
+                />
+                <div className="flex justify-between text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tighter">
+                  <span>Short Term</span>
+                  <span>Long Term (2 Years)</span>
                 </div>
               </div>
               
-              <div className="pt-4">
-                <div className="rounded-lg bg-primary/5 p-4 dark:bg-[var(--bg-secondary)]">
-                  <h4 className="font-bold text-foreground mb-2">With Zinova:</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {foodWaste > 0 ? (
-                      `Prevent ${Math.round(foodWaste * timePeriod * 4.33)}kg of food waste`
-                    ) : (
-                      "Start making an impact today!"
-                    )}
+              <div className="pt-6">
+                <div className="rounded-2xl bg-primary/5 p-5 border border-primary/10 backdrop-blur-sm">
+                  <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                    By partnering with Zinova, you'll prevent approximately 
+                    <span className="text-foreground font-black mx-1">
+                      {Math.round(foodWaste * timePeriod * 4.33).toLocaleString()}kg
+                    </span> 
+                    of food from reaching landfills over this period.
                   </p>
                 </div>
               </div>
