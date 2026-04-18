@@ -77,54 +77,6 @@ const Navbar = () => {
         )}
         
         {/* Logo */}
-<<<<<<< HEAD
-        <motion.div 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-4 cursor-pointer" 
-          onClick={() => navigate("/")}
-        >
-          <img 
-            src={logo} 
-            alt="Zinova" 
-            className="h-12 w-12 object-contain"
-          />
-          <span className="text-xl font-bold tracking-tight text-foreground">Zinova</span>
-        </motion.div>
-
-        {/* Desktop Navigation */}
-        <div className="hidden items-center gap-6 md:flex">
-          {NAVIGATION_ITEMS.map((item, index) => (
-            <motion.button
-              key={index}
-              whileHover={{ y: -2 }}
-              onClick={() => handleNavigation(item.href)}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              {item.name}
-            </motion.button>
-          ))}
-
-          {/* Auth Buttons */}
-          <div className="flex items-center gap-3">
-            <Link
-              to="/login"
-              onClick={() => handleNavClick("/login")}
-              className="text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              Login
-            </Link>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to="/signup"
-                onClick={() => handleNavClick("/signup")}
-                className="text-sm font-medium text-white bg-primary px-4 py-2 rounded-md hover:bg-primary/90 transition shadow-sm"
-              >
-                Sign up
-              </Link>
-            </motion.div>
-          </div>
-=======
         <div className="flex items-center gap-4 cursor-pointer group" onClick={() => navigate("/")}>
           <div className="relative">
             <img 
@@ -232,7 +184,6 @@ const Navbar = () => {
           </div>
 
           <div className="h-6 w-[1px] bg-border/50" />
->>>>>>> 25e15eb (Add login feature and ui update)
 
           <ThemeToggle />
         </div>

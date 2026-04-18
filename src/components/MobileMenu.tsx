@@ -1,10 +1,5 @@
 import { useState } from "react";
-<<<<<<< HEAD
-import { Menu, X, Leaf } from "lucide-react";
-import { Link } from "react-router-dom";
-=======
 import { Menu, X, Leaf, Heart, Utensils, UserPlus } from "lucide-react";
->>>>>>> 25e15eb (Add login feature and ui update)
 import { NAVIGATION_ITEMS } from "@/lib/config";
 import ThemeToggle from "@/components/ThemeToggle";
 import AnimatedButton from "@/components/ui/animated-button";
@@ -27,35 +22,6 @@ const MobileMenu = () => {
 
       {isOpen && (
         <div className="absolute top-full left-0 right-0 bg-background border-b border-border shadow-lg z-50">
-<<<<<<< HEAD
-          <div className="px-6 py-4 space-y-4">
-            {NAVIGATION_ITEMS.map((item, index) => (
-              <a
-                key={index}
-                href={item.href}
-                className="block py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {item.name}
-              </a>
-            ))}
-
-            <div className="pt-2 flex flex-col gap-2">
-              <Link
-                to="/login"
-                className="w-full py-3 text-center rounded-md font-medium text-foreground hover:bg-muted transition"
-                onClick={() => setIsOpen(false)}
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="w-full py-3 text-center rounded-md font-medium text-white bg-primary hover:bg-primary/90 transition shadow-sm"
-                onClick={() => setIsOpen(false)}
-              >
-                Sign up
-              </Link>
-=======
           <div className="px-6 py-4 space-y-6">
             <div className="space-y-4">
               {NAVIGATION_ITEMS.map((item, index) => (
@@ -68,7 +34,6 @@ const MobileMenu = () => {
                   {item.name}
                 </a>
               ))}
->>>>>>> 25e15eb (Add login feature and ui update)
             </div>
             
             <div className="pt-4 border-t border-border space-y-6">
