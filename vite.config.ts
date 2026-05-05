@@ -25,8 +25,13 @@ export default defineConfig({
       },
     },
     watch: {
-      ignored: ["**/gsheets-auth/**", "**/backend/**", "**/nginx/**"],
+      ignored: ["**/gsheets-auth/**", "**/backend/**", "**/nginx/**", "**/venv/**"],
     },
+  },
+  optimizeDeps: {
+    exclude: [],
+    // Prevent Vite from crawling large non-JS directories at the repo root
+    entries: ["index.html"],
   },
   preview: {
     host: true,

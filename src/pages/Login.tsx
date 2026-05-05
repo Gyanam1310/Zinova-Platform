@@ -1,5 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FormCard } from "@/components/forms/FormCard";
 import { FormInput } from "@/components/forms/FormInput";
 import { SubmitButton } from "@/components/forms/SubmitButton";
@@ -9,6 +9,7 @@ const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 type Step = "details" | "otp" | "done";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [step, setStep]       = useState<Step>("details");
   const [email, setEmail]     = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const Login = () => {
     if (!email) return setError("Please enter your email.");
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/auth/send-otp`, {
+      const res = await fetch(`${₹}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),
@@ -51,8 +52,11 @@ const Login = () => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || "Invalid OTP.");
+      localStorage.setItem("authToken", email.trim().toLowerCase());
+      localStorage.setItem("userEmail", email.trim().toLowerCase());
       setStep("done");
-      setSuccess("OTP verified! You're all set.");
+      setSuccess("OTP verified! Redirecting to dashboard...");
+      setTimeout(() => navigate("/dashboard", { replace: true }), 800);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed.");
     } finally {
