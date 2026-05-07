@@ -23,7 +23,7 @@ const Login = () => {
     if (!email) return setError("Please enter your email.");
     setLoading(true);
     try {
-      const res = await fetch(`${₹}/api/auth/send-otp`, {
+      const res = await fetch(`${API}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase() }),

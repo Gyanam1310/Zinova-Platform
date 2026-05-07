@@ -50,3 +50,33 @@ export async function sendOtp(payload: OtpRequest) {
 export async function verifyOtp(payload: VerifyOtpRequest) {
   return request("/auth/verify-otp", { method: "POST", body: JSON.stringify(payload) });
 }
+
+// ── NGO Registration Endpoint ─────────────────────────────────────────────
+
+export interface NGORegistrationPayload {
+  orgName: string;
+  email: string;
+  orgType: string;
+  regNumber: string;
+  contactPerson: string;
+  phone: string;
+}
+
+export async function registerNGO(payload: NGORegistrationPayload) {
+  return request("/register/ngo", { method: "POST", body: JSON.stringify(payload) });
+}
+
+// ── Restaurant Registration Endpoint ─────────────────────────────────────────
+
+export interface KitchenRegistrationPayload {
+  businessName: string;
+  email: string;
+  businessType: string;
+  address: string;
+  city: string;
+  phone: string;
+}
+
+export async function registerKitchen(payload: KitchenRegistrationPayload) {
+  return request("/register/kitchen", { method: "POST", body: JSON.stringify(payload) });
+}

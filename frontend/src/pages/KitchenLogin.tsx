@@ -85,7 +85,7 @@ const KitchenLogin = () => {
               </div>
             </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Kitchen Portal</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Restaurant Portal</h1>
           <p className="text-muted-foreground">Manage your surplus and reach those in need</p>
         </div>
 
@@ -103,8 +103,8 @@ const KitchenLogin = () => {
                 className="space-y-6 pt-4"
               >
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold">Kitchen Access</h2>
-                  <p className="text-sm text-muted-foreground">Log in to your kitchen dashboard using your registered email.</p>
+                  <h2 className="text-xl font-semibold">Restaurant Access</h2>
+                  <p className="text-sm text-muted-foreground">Log in to your restaurant dashboard using your registered email.</p>
                 </div>
 
                 {error && (
@@ -123,7 +123,7 @@ const KitchenLogin = () => {
                     name="email"
                     type="email"
                     label="Business Email"
-                    placeholder="kitchen@restaurant.com"
+                    placeholder="restaurant@restaurant.com"
                     value={email}
                     onChange={(e: ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                     required
@@ -201,7 +201,7 @@ const KitchenLogin = () => {
                 </div>
                 <div className="space-y-2">
                   <h2 className="text-2xl font-bold italic">Access Granted</h2>
-                  <p className="text-muted-foreground text-sm">Entering your kitchen management portal...</p>
+                  <p className="text-muted-foreground text-sm">Entering your restaurant management portal...</p>
                 </div>
                 <Link to="/dashboard" className="inline-block w-full py-3 bg-accent text-accent-foreground rounded-lg font-medium shadow-lg hover:shadow-accent/20 transition-all">
                   Proceed to Dashboard

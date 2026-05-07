@@ -1,12 +1,16 @@
-# ── Node / Frontend ───────────────────────────────────────────────────────────
-node_modules
-dist
-dist-ssr
-.vite
+# ── Frontend build output and dependencies ────────────────────────────────────
+/frontend/node_modules/
+/frontend/dist/
+/frontend/dist-ssr/
+/frontend/.vite/
+/node_modules/
+/dist/
+/dist-ssr/
+/.vite/
 *.local
 
 # ── Python / Backend ──────────────────────────────────────────────────────────
-__pycache__
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -14,7 +18,8 @@ __pycache__
 venv/
 env/
 ENV/
-.venv
+.venv/
+.venv311/
 *.egg-info/
 .eggs/
 .pytest_cache/
