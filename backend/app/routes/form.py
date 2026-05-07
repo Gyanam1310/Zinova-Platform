@@ -21,15 +21,23 @@ SPREADSHEET_ID = os.getenv(
     "GOOGLE_SPREADSHEET_ID", "1_T4c75_Jjbi8b16HJLqsSeBK3iZxRLQCgpq-OnXJCGY"
 )
 SHEET_RANGE = os.getenv("GOOGLE_SHEET_RANGE", "Sheet1!A:H")
-SERVICE_ACCOUNT_FILE = os.getenv(
-    "GOOGLE_SERVICE_ACCOUNT_FILE",
-    str(Path(__file__).resolve().parents[3] / "service-account.json"),
-)
+RENDER_SERVICE_ACCOUNT_FILE = Path("/etc/secrets/service-account.json")
+LOCAL_SERVICE_ACCOUNT_FILE = Path(__file__).resolve().parents[3] / "service-account.json"
 
 # Sheet names for registrations
 PLATFORM_INQUIRIES_SHEET = "Platform_Inquiries"
 NGO_SHEET = "NGO_Registrations"
 KITCHEN_SHEET = "Kitchen_Registrations"
+
+
+def resolve_service_account_path() -> Path:
+    for candidate in (RENDER_SERVICE_ACCOUNT_FILE, LOCAL_SERVICE_ACCOUNT_FILE):
+        if candidate.exists():
+            logger.info("Using Google service account file from %s", candidate.parent)
+            return candidate
+
+    logger.error("Google service account file not found in Render secrets or local project path")
+    raise RuntimeError("Google service account file not found")
 
 
 class SubmitRequest(BaseModel):
@@ -74,17 +82,15 @@ def get_sheets_client():
     if not SPREADSHEET_ID:
         raise RuntimeError("GOOGLE_SPREADSHEET_ID is not configured")
 
-    service_account_path = Path(SERVICE_ACCOUNT_FILE)
-    if not service_account_path.exists():
-        raise RuntimeError(
-            f"Service account file not found at: {service_account_path}"
+    try:
+        service_account_path = resolve_service_account_path()
+        credentials = service_account.Credentials.from_service_account_file(
+            str(service_account_path), scopes=SCOPES
         )
-
-    credentials = service_account.Credentials.from_service_account_file(
-        str(service_account_path), scopes=SCOPES
-    )
-
-    return build("sheets", "v4", credentials=credentials, cache_discovery=False)
+        return build("sheets", "v4", credentials=credentials, cache_discovery=False)
+    except Exception:
+        logger.exception("Failed to initialize Google Sheets client")
+        raise
 
 
 @router.post("/submit")
