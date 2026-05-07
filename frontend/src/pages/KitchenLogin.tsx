@@ -7,7 +7,7 @@ import { ChefHat, ArrowLeft, ShieldCheck, Utensils } from "lucide-react";
 import { Link } from "react-router-dom";
 import PortalBackground from "@/components/PortalBackground";
 
-const API = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+const API = import.meta.env.VITE_API_URL || "https://zinova-backend.onrender.com";
 
 type Step = "details" | "otp" | "done";
 
