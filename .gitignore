@@ -77,3 +77,32 @@ out/
 
 # ── Docker ────────────────────────────────────────────────────────────────────
 .dockerignore
+
+# Runtime envs
+backend/.env
+frontend/.env
+
+# Mac/Linux temp
+.fuse_hidden*
+.Trashes
+
+# TypeScript
+*.tsbuildinfo
+
+# Local database files
+*.sqlite3
+*.db
+
+# Pyright
+.pyright/
+
+# Ruff/Lint cache
+.ruff_cache/
+
+# Optional Netlify
+.netlify/
+
+# Optional Turbo
+.turbo/
+
+.vscode/*
