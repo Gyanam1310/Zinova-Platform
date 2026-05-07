@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 async function request(path: string, options: RequestInit = {}) {
   const config: RequestInit = {
@@ -44,11 +44,11 @@ export interface VerifyOtpRequest {
 // ── OTP Authentication Endpoints ─────────────────────────────────────────────
 
 export async function sendOtp(payload: OtpRequest) {
-  return request("/auth/send-otp", { method: "POST", body: JSON.stringify(payload) });
+  return request("/api/auth/send-otp", { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function verifyOtp(payload: VerifyOtpRequest) {
-  return request("/auth/verify-otp", { method: "POST", body: JSON.stringify(payload) });
+  return request("/api/auth/verify-otp", { method: "POST", body: JSON.stringify(payload) });
 }
 
 // ── NGO Registration Endpoint ─────────────────────────────────────────────
@@ -63,7 +63,7 @@ export interface NGORegistrationPayload {
 }
 
 export async function registerNGO(payload: NGORegistrationPayload) {
-  return request("/register/ngo", { method: "POST", body: JSON.stringify(payload) });
+  return request("/api/register/ngo", { method: "POST", body: JSON.stringify(payload) });
 }
 
 // ── Restaurant Registration Endpoint ─────────────────────────────────────────
@@ -78,5 +78,5 @@ export interface KitchenRegistrationPayload {
 }
 
 export async function registerKitchen(payload: KitchenRegistrationPayload) {
-  return request("/register/kitchen", { method: "POST", body: JSON.stringify(payload) });
+  return request("/api/register/kitchen", { method: "POST", body: JSON.stringify(payload) });
 }
